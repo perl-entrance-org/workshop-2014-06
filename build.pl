@@ -10,6 +10,7 @@ my $dst_dir = '.';
 my @slides  = qw/
   intro.md
   prepare_mojolicious.md
+  install_mojolicious.md
   http.md
   basic_mojolicious.md
   create_bbs.md
