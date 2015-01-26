@@ -1,49 +1,95 @@
 # Mojolicious 入門
 
+## 最初に
+- この入門では、難しい表現を避けるために、厳密には正しくない事も書いてあります。
+- この入門に書いていない沢山の引数やコマンドについては、本家サイトなどのリファレンスをご覧ください。
+
 ## 雛形を作る
+```
+$ mojo generate lite_app hello
+```
 
-    $ mojo generate lite_app hello # cpanm でインストールした方
-    $ perl -Ilib script/mojo generate lite_app hello # zipを解凍して準備した方
+- Mojoliciousをインストールすると、``mojo``というコマンドが使えるようになります。
+- ``mojo generate lite_app``と入力すると、``Mojolicious::Lite``を使ったひな形を作成してくれます。
+- ``hello``は作成するファイル名です。
+- 現在のディレクトリに``hello``というファイルが作成されているか確認して下さい。
 
-- Mojolicious を使った Web アプリケーションの簡単な雛形を作成します
-    - Mojolicious の場合, `lite_app` 以外にも大規模な Web アプリケーション用の `app` という雛形が用意されています
+## 起動してみる
+```
+$ morbo hello
+```
 
-## Web アプリケーションの起動
+- Mojoliciousをインストールすると、``morbo``というコマンドも使えるようになります。
+- ``morbo``は開発用のアプリケーションサーバーを起動してくれます。
+- 画面上に``Server available at http://127.0.0.1:3000.``と表示されれば起動しています。
+- Web ブラウザで ``http://127.0.0.1:3000`` にアクセスしてみましょう。
 
-    $ morbo ./hello # cpanm でインストールした方
-    $ perl -Ilib script/morbo ./hello # zipを解凍して準備した方
+## コード解説（Line 1 - 2）
+```
+#!/usr/bin/env perl
+use Mojolicious::Lite;
+```
 
-- Web ブラウザで `localhost:3000` にアクセスしてみましょう!
+- ``Mojolicious::Lite`` は ``Mojolicious`` を簡単に使うためのモジュールです。
+- `use Mojolicious::Lite;` とすることで、自動的に``strict``、``warnings``、``utf8``、``Perl 5.10 feature``が有効になります。
+
+## コード解説（Line 1 - 2）
+```
+use strict;
+use warnings;
+use utf8;
+use feature ':5.10';
+```
+
+- つまり、``use Mojolicious::Lite;``を書くだけで、ついでに上記のように書いているのと同じということです。
+
+## コード解説（Line 4 - 5）
+```
+# Documentation browser under "/perldoc"
+plugin 'PODRenderer';
+```
+
+- ``Mojolicious``では、機能を拡張するプラグインが利用できます。
+- ここでは、``Mojolicious::Plugin::PODRenderer``を使用しています。
+- ``http://127.0.0.1:3000/perldoc``にアクセスすると``Mojolicious``のPODを読むことができます。
+- ［参考資料］
+    - [Mojolicious::Plugin::PODRendererが便利 - Qiita](http://qiita.com/mozquito/items/1eabbb8ac7b1e516492f)
+
+## コード解説（Line 7 - 10）
+```
+get '/' => sub {
+  my $c = shift;
+  $c->render(template => 'index');
+};
+```
+
+- ウェブアプリケーションでは、URLごとに処理を変更できると便利です。
+- このようなURLごとに処理を振り分ける機能のことを``router``や``dispatcher``と呼びます。
+- ``Mojolicious::Lite``では、HTTPのGETリクエスト用の``router``として``get``という関数が用意されています。
+
+## コード解説（Line 7 - 10）
+```
+get '/' => sub { ... };
+```
+
+- 見慣れない書き方ですが、これは、``get``という関数に、2つの引数を渡しているだけです。
+- 一つ目の引数が``'/'``という文字列、二つ目の引数がコードリファレンスです。
+- このように書くことで、HTTPのGETメソッドで``/``にアクセスした時の処理を``sub { ... }``に書くことができます。
+
+## コード解説（Line 7 - 10）
+```
+my $c = shift;
+$c->render(template => 'index');
+```
+
+- コードリファレンスの最初の行は、フレームワークのコントローラーを受け取っています。
+- コントローラーには``render``というメソッドがあり、どのような出力をするのかを書くことができます。
+- ここでは``index``のテンプレートを使用して出力するように書いています。
 
 ## コード解説
-
-    #!/usr/bin/env perl
-    use Mojolicious::Lite;
-
-- `Mojolicious::Lite` は `Mojolicious` の Lite 版
-    - `Mojolicious::Lite` は 1 つのスクリプトで複数のページを作成
-    - `Mojolicious` は 1 ページ = 1 スクリプト
-- 総ページ数の少ない(1〜2ページ程度), 簡単な Web アプリケーションであれば Lite で十分
-
-## コード解説
-
-    #!/usr/bin/env perl
-    use Mojolicious::Lite;
-
-- `use Mojolicious::Lite;` とすることで, 自動的に `use warnings` と `use strict` が書かれているのと同じ(有効な)状態になる
-
-## コード解説
-    get '/' => sub {
-      my $self = shift;
-      $self->render('index');
-    };
-
-- `get '/' => sub { ... };` は, get メソッドで `'/'` というURLにアクセスしたとき, sub 内の処理を行う
-- 2 行目は「お約束」のようなもの
-- 3 行目 はテンプレート `index` を使ってコンテンツを生成
-
-## コード解説
-    app->start;
+```
+app->start;
+```
 
 - アプリケーションを実行します, という意味
 - これも「お約束」のようなもの
