@@ -2,18 +2,25 @@
 
 ## Mojolicious のインストール
 
-    $ cpanm Mojolicious
+```
+$ cpanm -n Mojolicious
+```
 
-- Mojolicious とは?
-    - Perl の Web アプリケーションフレームワーク (通称 WAF)
-    - Perl 5.10.1 以降で動作する (コアモジュール以外に依存モジュールがない)
-    - 詳しくは: [mojolicious.us](http://mojolicio.us/)
-    - ドキュメントの日本語役: [Mojoliciousドキュメント 日本語訳](https://github.com/yuki-kimoto/mojolicious-guides-japanese/wiki)
+- エラーになる場合は以下のコマンドを試してみてください。
 
-## Mojolicious のインストール
+```
+$ curl -L https://cpanmin.us | perl - -n Mojolicious
+```
 
-- cpanm がインストールされていない場合, 次のようにして導入(準備)することができます
-    - [http://latest.mojolicio.us/](http://latest.mojolicio.us/) から最新版をダウンロード
-    - ダウンロードしたzipファイルを解凍
-- 以後, 作業は基本的に解凍したディレクトリの中で行います
-    - 一番いいのは cpanm 等でインストールすることなので, 出来ていない方は後日チャレンジしてみよう!
+- ``https://``がエラーになる場合は``http://``でも問題ありません。
+
+## Mojolicious とは？
+- Perl の Web アプリケーションフレームワーク（WAF）です。
+- MVCフレームワークの、Modelを除いた（ViewとControllerの）機能を持っています。
+- Perl 5.10.1 以降で動作します。
+
+## Mojoliciousの資料
+- 本家
+    - [mojolicious.us](http://mojolicio.us/)
+- 日本語訳
+    - [Mojoliciousドキュメント 日本語訳](https://github.com/yuki-kimoto/mojolicious-guides-japanese/wiki)
