@@ -3,7 +3,15 @@
 ### 第6回 Webアプリ編
 
 ___
-## 本日の講師
+## 諸注意
+- 会場について
+    - 飲食・喫煙・トイレetc
+- 写真撮影について
+    - 写真撮影NGな方はお手数ですが申し出てください
+
+___
+## 紹介
+- 講師・サポーター紹介
 
 ___
 ## 本日の内容
@@ -22,173 +30,155 @@ ___
 ___
 ## Mojolicious のインストール
 
-    $ cpanm Mojolicious
+```
+$ cpanm -n Mojolicious
+```
 
-- Mojolicious とは?
-    - Perl の Web アプリケーションフレームワーク (通称 WAF)
-    - Perl 5.10.1 以降で動作する (コアモジュール以外に依存モジュールがない)
-    - 詳しくは: [mojolicious.us](http://mojolicio.us/)
-    - ドキュメントの日本語役: [Mojoliciousドキュメント 日本語訳](https://github.com/yuki-kimoto/mojolicious-guides-japanese/wiki)
+- エラーになる場合は以下のコマンドを試してみてください。
 
-___
-## Mojolicious のインストール
+```
+$ curl -L https://cpanmin.us | perl - -n Mojolicious
+```
 
-- cpanm がインストールされていない場合, 次のようにして導入(準備)することができます
-    - [http://latest.mojolicio.us/](http://latest.mojolicio.us/) から最新版をダウンロード
-    - ダウンロードしたzipファイルを解凍
-- 以後, 作業は基本的に解凍したディレクトリの中で行います
-    - 一番いいのは cpanm 等でインストールすることなので, 出来ていない方は後日チャレンジしてみよう!
-
----
-# Mojoliciousのインストール
+- ``https://``がエラーになる場合は``http://``でも問題ありません。
 
 ___
-## Mojoliciousのインストール
-- 第6回の｢Webサービス開発｣で利用するWAF、Mojoliciousをインストールしてみましょう
-    - あらかじめ plenv 等でシステム以外のPerlを用意しておいてください
-    - 詳しくは、#1-Bの資料で解説しています
+## Mojolicious とは？
+- Perl の Web アプリケーションフレームワーク（WAF）です。
+- MVCフレームワークの、Modelを除いた（ViewとControllerの）機能を持っています。
+- Perl 5.10.1 以降で動作します。
 
 ___
-## Mojoliciousのインストール
-
-    $ cpanm Mojolicious
-
-- 以上です
-    - 多少時間がかかります。しばらく待ちましょう
-    - `1 distribution installed`と表示されていれば成功です
-
-___
-## 動作確認
-
-    $ mojo generate lite_app
-      [exist] /Users/hoge/sandbox
-      [write] /Users/hoge/sandbox/myapp.pl
-      [chmod] /Users/hoge/sandbox/myapp.pl 744
-
-- Mojoliciousのテンプレート(雛形)を作ってみます
-    - `mojo`はMojoliciousが提供するコマンドです
-
-___
-## 動作確認
-
-    $ morbo myapp.pl
-    [Sun Dec  8 09:38:11 2013] [info] Listening at "http://*:3000".
-    Server available at http://127.0.0.1:3000.
-
-- `mojo generate lite_app`コマンドが生成する`myapp.pl`を`morbo`コマンドで実行します
-    - ブラウザに、URLとして｢localhost:3000｣と入力した際、｢Welcome to the Mojolicious real-time web framework!｣と表示されていればOKです!
-- 次に、`myapp.pl`のコードを見てみましょう
-
-___
-## コード(1)
-    #!/usr/bin/env perl
-    use Mojolicious::Lite;
-
-    # Documentation browser under "/perldoc"
-    plugin 'PODRenderer';
-
-    get '/' => sub {
-      my $c = shift;
-      $c->render('index');
-    };
-
-    app->start;
-    __DATA__
-
-___
-## コード(2)
-    @@ index.html.ep
-    % layout 'default';
-    % title 'Welcome';
-    Welcome to the Mojolicious real-time web framework!
-
-    @@ layouts/default.html.ep
-    <!DOCTYPE html>
-    <html>
-      <head><title><%= title %></title></head>
-      <body><%= content %></body>
-    </html>
-
-___
-## コントローラとテンプレート
-- コード(1)では、接続したURLに対する処理が書かれています
-- コード(2)では、HTMLのテンプレートが書かれています
-    - Webアプリケーションを開発する際は、このように｢見た目の部分｣と｢処理の部分｣を分けて書くことが多いです
-- 今は1枚のスクリプトに全て書いていますが、通常これらは別ファイルに分けて記述します
+## Mojoliciousの資料
+- 本家
+    - [mojolicious.us](http://mojolicio.us/)
+- 日本語訳
+    - [Mojoliciousドキュメント 日本語訳](https://github.com/yuki-kimoto/mojolicious-guides-japanese/wiki)
 
 ---
 # HTTP の基礎
 
 ___
-## HTTP の基礎
-- HTTP ... HyperText Transfer Protocol
-    - Web ブラウザと Web サーバの間でコンテンツの送受信を行うためのプロトコル
-- 基本的な考え方は, サーバに｢何を｣｢どうしたいか｣を伝える
-    - ｢何を｣が URL , ｢どうしたいか｣がメソッド
+## HTTPとは？
+- ``HyperText Transfer Protocol``のこと
+- Web ブラウザと Web サーバの間でコンテンツの送受信を行うためのプロトコル
+- 基本的な考え方は、サーバに｢何を｣｢どうしたいか｣を伝える
+    - ｢何を｣が ``URL``、｢どうしたいか｣が``メソッド``
 
 ___
 ## HTTP のメソッド
+よく使うのは以下の2つ
 
-- よく使うのは以下の2つ
-    - GET
-        - サーバからデータを取ってきたい時に使う
-    - POST
-        - GET とは逆に, サーバにデータを送りたい時に使う
-        - フォームや, BBS への投稿など...
+### GET
+- （主に）サーバからデータを取得する
+
+### POST
+- （主に）サーバにデータを送信する
 
 ---
 # Mojolicious 入門
 
 ___
+## 最初に
+- この入門では、難しい表現を避けるために、厳密には正しくない事も書いてあります。
+- この入門に書いていない沢山の引数やコマンドについては、本家サイトなどのリファレンスをご覧ください。
+
+___
 ## 雛形を作る
+```
+$ mojo generate lite_app hello
+```
 
-    $ mojo generate lite_app hello # cpanm でインストールした方
-    $ perl -Ilib script/mojo generate lite_app hello # zipを解凍して準備した方
-
-- Mojolicious を使った Web アプリケーションの簡単な雛形を作成します
-    - Mojolicious の場合, `lite_app` 以外にも大規模な Web アプリケーション用の `app` という雛形が用意されています
+- Mojoliciousをインストールすると、``mojo``というコマンドが使えるようになります。
+- ``mojo generate lite_app``と入力すると、``Mojolicious::Lite``を使ったひな形を作成してくれます。
+- ``hello``は作成するファイル名です。
+- 現在のディレクトリに``hello``というファイルが作成されているか確認して下さい。
 
 ___
-## Web アプリケーションの起動
+## 起動してみる
+```
+$ morbo hello
+```
 
-    $ morbo ./hello # cpanm でインストールした方
-    $ perl -Ilib script/morbo ./hello # zipを解凍して準備した方
+- Mojoliciousをインストールすると、``morbo``というコマンドも使えるようになります。
+- ``morbo``は開発用のアプリケーションサーバーを起動してくれます。
+- 画面上に``Server available at http://127.0.0.1:3000.``と表示されれば起動しています。
+- Web ブラウザで ``http://127.0.0.1:3000`` にアクセスしてみましょう。
 
-- Web ブラウザで `localhost:3000` にアクセスしてみましょう!
+___
+## コード解説（Line 1 - 2）
+```
+#!/usr/bin/env perl
+use Mojolicious::Lite;
+```
+
+- ``Mojolicious::Lite`` は ``Mojolicious`` を簡単に使うためのモジュールです。
+- `use Mojolicious::Lite;` とすることで、自動的に``strict``、``warnings``、``utf8``、``Perl 5.10 feature``が有効になります。
+
+___
+## コード解説（Line 1 - 2）
+```
+use strict;
+use warnings;
+use utf8;
+use feature ':5.10';
+```
+
+- つまり、``use Mojolicious::Lite;``を書くだけで、ついでに上記のように書いているのと同じということです。
+
+___
+## コード解説（Line 4 - 5）
+```
+___
+# Documentation browser under "/perldoc"
+plugin 'PODRenderer';
+```
+
+- ``Mojolicious``では、機能を拡張するプラグインが利用できます。
+- ここでは、``Mojolicious::Plugin::PODRenderer``を使用しています。
+- ``http://127.0.0.1:3000/perldoc``にアクセスすると``Mojolicious``のPODを読むことができます。
+- ［参考資料］
+    - [Mojolicious::Plugin::PODRendererが便利 - Qiita](http://qiita.com/mozquito/items/1eabbb8ac7b1e516492f)
+
+___
+## コード解説（Line 7 - 10）
+```
+get '/' => sub {
+  my $c = shift;
+  $c->render(template => 'index');
+};
+```
+
+- ウェブアプリケーションでは、URLごとに処理を変更できると便利です。
+- このようなURLごとに処理を振り分ける機能のことを``router``や``dispatcher``と呼びます。
+- ``Mojolicious::Lite``では、HTTPのGETリクエスト用の``router``として``get``という関数が用意されています。
+
+___
+## コード解説（Line 7 - 10）
+```
+get '/' => sub { ... };
+```
+
+- 見慣れない書き方ですが、これは、``get``という関数に、2つの引数を渡しているだけです。
+- 一つ目の引数が``'/'``という文字列、二つ目の引数がコードリファレンスです。
+- このように書くことで、HTTPのGETメソッドで``/``にアクセスした時の処理を``sub { ... }``に書くことができます。
+
+___
+## コード解説（Line 7 - 10）
+```
+my $c = shift;
+$c->render(template => 'index');
+```
+
+- コードリファレンスの最初の行は、フレームワークのコントローラーを受け取っています。
+- コントローラーには``render``というメソッドがあり、どのような出力をするのかを書くことができます。
+- ここでは``index``のテンプレートを使用して出力するように書いています。
 
 ___
 ## コード解説
-
-    #!/usr/bin/env perl
-    use Mojolicious::Lite;
-
-- `Mojolicious::Lite` は `Mojolicious` の Lite 版
-    - `Mojolicious::Lite` は 1 つのスクリプトで複数のページを作成
-    - `Mojolicious` は 1 ページ = 1 スクリプト
-- 総ページ数の少ない(1〜2ページ程度), 簡単な Web アプリケーションであれば Lite で十分
-
-___
-## コード解説
-
-    #!/usr/bin/env perl
-    use Mojolicious::Lite;
-
-- `use Mojolicious::Lite;` とすることで, 自動的に `use warnings` と `use strict` が書かれているのと同じ(有効な)状態になる
-
-___
-## コード解説
-    get '/' => sub {
-      my $self = shift;
-      $self->render('index');
-    };
-
-- `get '/' => sub { ... };` は, get メソッドで `'/'` というURLにアクセスしたとき, sub 内の処理を行う
-- 2 行目は「お約束」のようなもの
-- 3 行目 はテンプレート `index` を使ってコンテンツを生成
-
-___
-## コード解説
-    app->start;
+```
+app->start;
+```
 
 - アプリケーションを実行します, という意味
 - これも「お約束」のようなもの
