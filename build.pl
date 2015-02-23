@@ -11,6 +11,7 @@ my @slides  = qw/
   intro.md
   prepare_mojolicious.md
   http.md
+  lite_app_mojolicious.md
   basic_mojolicious.md
   create_bbs.md
   qanda.md
