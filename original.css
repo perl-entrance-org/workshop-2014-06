@@ -148,7 +148,12 @@ body {
 
 .reveal .slides pre code {
   font-size: 1.5em;
+}
+
+.reveal .slides code {
   line-height: 1.2;
   letter-spacing: 1px;
+  background-color: #333333;
+  color: #ffddee;
   font-family: Consolas, Ricty, "Courier New", monospace;
 }
