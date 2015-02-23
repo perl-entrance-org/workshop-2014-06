@@ -76,7 +76,7 @@ ___
 - （主に）サーバにデータを送信する
 
 ---
-# Mojolicious 入門
+# Mojolicious の ひな形
 
 ___
 ## 最初に
@@ -84,20 +84,20 @@ ___
 - この入門に書いていない沢山の引数やコマンドについては、本家サイトなどのリファレンスをご覧ください。
 
 ___
-## 雛形を作る
+## ひな形を作る
 ```
-$ mojo generate lite_app hello
+$ mojo generate lite_app hello.pl
 ```
 
 - Mojoliciousをインストールすると、``mojo``というコマンドが使えるようになります。
 - ``mojo generate lite_app``と入力すると、``Mojolicious::Lite``を使ったひな形を作成してくれます。
-- ``hello``は作成するファイル名です。
-- 現在のディレクトリに``hello``というファイルが作成されているか確認して下さい。
+- ``hello.pl``は作成するファイル名です。
+- 現在のディレクトリに``hello.pl``というファイルが作成されているか確認して下さい。
 
 ___
 ## 起動してみる
 ```
-$ morbo hello
+$ morbo hello.pl
 ```
 
 - Mojoliciousをインストールすると、``morbo``というコマンドも使えるようになります。
@@ -128,11 +128,8 @@ use feature ':5.10';
 
 ___
 ## コード解説（Line 4 - 5）
-```
-___
-# Documentation browser under "/perldoc"
-plugin 'PODRenderer';
-```
+    # Documentation browser under "/perldoc"
+    plugin 'PODRenderer';
 
 - ``Mojolicious``では、機能を拡張するプラグインが利用できます。
 - ここでは、``Mojolicious::Plugin::PODRenderer``を使用しています。
@@ -175,38 +172,77 @@ $c->render(template => 'index');
 - ここでは``index``のテンプレートを使用して出力するように書いています。
 
 ___
-## コード解説
+## コード解説（Line 12）
 ```
 app->start;
 ```
 
-- アプリケーションを実行します, という意味
-- これも「お約束」のようなもの
+- ``Mojolicious::Lite``を使う場合は、コードの最後にこの命令文を書かなければいけません。
+
+- 当面は「お約束」として覚えておけばよいでしょう。
 
 ___
-## コード解説
-    __DATA__
+## コード解説（Line 13）
+```
+__DATA__
+```
 
-    @@ index.html.ep
-    % layout 'default';
-    % title 'Welcome';
-    Welcome to the Mojolicious real-time web framework!
-
-- `ep` は `embedded perl` の略称
-- `layout 'default';` は次項で説明するレイアウトファイルの指定
-- `title` は `default.html.ep` の `title` 変数, `Welcome to...` は `content` 変数に渡される
+- ``__DATA__``以降は文字通りデータとして使えます。Mojolicious::Liteでは、ここにテンプレートなどを書いておくことができます。
 
 ___
-## コード解説
-    @@ layouts/default.html.ep
-    <!DOCTYPE html>
-    <html>
-      <head><title><%= title %></title></head>
-      <body><%= content %></body>
-    </html>
+## コード解説（Line 15）
+```
+@@ index.html.ep
+```
 
-- `localhost:3000` のソースと見比べてみましょう
-- `<%= xxx %>` がテンプレートの中で使用できる変数に相当する(詳しくは後述)
+- ``Mojolicious::Lite``では、``@@ index.html.ep``と書いておくと、次に``@@``が出てくるまでの範囲を``index.html.ep``というファイルとして扱うことができます。このようにすれば、多くのファイルを必要とせずにプログラムを書くことができます。
+- ``ep``は、Mojoliciousの標準的なテンプレート機能を使用するための拡張子です。拡張子を``ep``にすることで、テンプレートであることを示します。
+
+___
+## コード解説（Line 16 - 18）
+```
+% layout 'default';
+% title 'Welcome';
+Welcome to the Mojolicious real-time web framework!
+```
+
+- ``%``は、その行をPerlのコードとして実行したい時に書きます。ここでは出てきませんがHTMLタグのように``<% Perlのコード... %>``と書くこともできます。
+- Mojoliciousの標準的なテンプレートでは、このように書くとテンプレートの中でPerlのコードが実行できます。
+- なお、``%``では、その行全体がPerlのコードとして扱われますが、``<% ... %>``の場合は、``...``の部分のみがPerlのコードとして扱われます。
+
+___
+## コード解説（Line 16 - 18）
+- ``layout``はレイアウトを指定します。ここでは``default``を指定しています。（後ほど詳しく説明します）
+- ``title``はタイトルを指定します。ここでは``Welcome``を指定しています。（後ほど詳しく説明します）
+- それ以外の通常の文字列は、そのままHTMLとして表示されます。
+
+___
+## コード解説（Line 20）
+```
+@@ layouts/default.html.ep
+```
+
+- ``@@``が書いてあるので、これ以降は``layouts/default.html.ep``として扱われます。この文字列はパス扱いなので、``layouts``ディレクトリにある``default.html.ep``というファイルを示します。
+- ``Mojolicious::Lite``では、``layouts``ディレクトリ内にレイアウト用のテンプレートを用意でき、``layout``コマンドで切り替えて使うことができます。
+- 先のコードで``% layout 'default';``と指定しましたので、``layouts``ディレクトリにある``default.html.ep``をレイアウトとして使用することになります。
+
+___
+## コード解説（Line 21 - 25）
+```
+<!DOCTYPE html>
+<html>
+  <head><title><%= title %></title></head>
+  <body><%= content %></body>
+</html>
+```
+
+- ``<%= ... %>``（あるいは``%=``から始まる行）は、Perlのコードを実行するだけでなく、値を表示したい時に書きます。
+- ``<%= title %>``は、先のコードで``% title 'Welcome';``と指定したので、``Welcome``と表示されます。
+- ``title``は、テンプレート内で使える関数で、このようにHTMLファイルのタイトルを取得したり設定したりできる、便利な関数です。
+- ``content``は、レイアウトテンプレート内で使える関数で、通常のテンプレートの中身を取得する関数です。
+
+---
+# Mojolicious 入門
 
 ___
 ## 変数を渡す
